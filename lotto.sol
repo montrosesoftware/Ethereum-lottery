@@ -1,9 +1,10 @@
+import "./rng.sol";
+
 contract lotto {
 	
 	uint uniqueUsersThreshold = 20;
 	uint8 numOfBlocks;
 	uint betValue;
-	
 	uint usersCounter;
 	mapping (uint => address) userIndex;
 	mapping (address => uint) betsPerUser;
@@ -20,7 +21,6 @@ contract lotto {
 		if (!checkBettingAllowed()) {
 			throw;
 		}
-		
 		uint amount = msg.value;
 		
 		// do not accept bet 
@@ -61,11 +61,8 @@ contract lotto {
 		}
 	}
 	
-	function draw() returns (uint randomNumber ){
-		
-//		uint raadomNumber = randomGenerator.getRandom(block.blockhash(0), 2, 10);
-//		return randomNumber;
-
+	function draw() returns (uint randomNumber ){	
+		return new rng().getRandom(block.blockhash(0), 2, 10);
 	}
 	
 	function getWinner(uint id) returns(address winner) {
