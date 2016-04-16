@@ -9,7 +9,7 @@ contract lotto {
 	mapping (uint => address) userIndex;
 	mapping (address => uint) betsPerUser;
 	//rng randomGenerator;
-	bytes32 lastBlockHash = 0;
+	bytes32 lotteryClosingHash = 0;
 	
 	function lotto(uint _uniqueUsersThreshold, uint8 _numOfBlocks, uint _betValue){
 		uniqueUsersThreshold = _uniqueUsersThreshold;
@@ -17,10 +17,8 @@ contract lotto {
 		betValue = _betValue;
 	}
 	
-	function bet()  {
-		if (!checkBettingAllowed()) {
-			throw;
-		}
+	function bet() canBet {
+		
 		uint amount = msg.value;
 		
 		// do not accept bet 
@@ -32,14 +30,15 @@ contract lotto {
 		// calculate number of bets for a single user
 		uint numOfBets = amount / betValue;
 		
+		address user = msg.sender;
+		
 		// if amount of Ether is not divided by betValue
 		// send rest of the money to the better
 		uint amountToReturn = amount % betValue;
 		if(amountToReturn != 0) {
-			msg.sender.send(amountToReturn);
+			user.send(amountToReturn);
 		}
 		
-		address user = msg.sender;
 		if (betsPerUser[user] == 0){
 			userIndex[usersCounter] = user;
 			betsPerUser[user] = numOfBets;
@@ -51,18 +50,14 @@ contract lotto {
 		
 		if (usersCounter >= uniqueUsersThreshold){
 			//TODO: change index of block before release
-			lastBlockHash = block.blockhash(0);
+			lotteryClosingHash = block.blockhash(0);
 		}
-		
-		
+	}
+	
+	modifier canBet {
+		if (lotteryClosingHash != 0) throw; _
 	}
 
-	function checkBettingAllowed() returns (bool){
-		if (lastBlockHash == 0){
-			return true;
-		}
-		return false;
-	}
 	
 	function draw() returns (uint randomNumber){	
 		return new rng().getRandom(block.blockhash(0), 2, 10);
