@@ -27,7 +27,7 @@ contract lotto {
 	
 	function bet(){
 		uint amount = msg.value;
-		if (amount != 1 wei){
+		if (amount < 1 wei){
 			throw;
 		}
 		bets.push(msg.sender);
