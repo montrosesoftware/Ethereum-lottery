@@ -17,10 +17,8 @@ contract lotto {
 		betValue = _betValue;
 	}
 	
-	function bet()  {
-		if (!checkBettingAllowed()) {
-			throw;
-		}
+	function bet() canBet {
+		
 		uint amount = msg.value;
 		
 		// do not accept bet 
@@ -48,16 +46,18 @@ contract lotto {
 		else {
 			betsPerUser[user] += amount;
 		}
+		
+		tryStartLotter();
+	}
+	
+	modifier canBet {
+		if (usersCounter >= uniqueUsersThreshold) throw; _
 	}
 
-	function checkBettingAllowed() returns (bool){
-		if (usersCounter < uniqueUsersThreshold){
-			return true;
-		}
-		else{
-			//TODO: change index of block before release
+	function tryStartLotter() private {
+		if (usersCounter >= uniqueUsersThreshold){
 			lastBlockHash = block.blockhash(0);
-			return false;
+			// TODO: alarm
 		}
 	}
 	
