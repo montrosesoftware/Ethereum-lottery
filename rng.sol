@@ -8,7 +8,7 @@ contract rng {
 			if (startingBlock == block.blockhash(uint(i))) {
 				value = uint(startingBlock);
 				for (int j=1; j < blocks; j++){
-					value = value & uint(block.blockhash(uint(i+j)));
+					value = xor(value, uint(block.blockhash(uint(i+j))));
 				}
 				return value % searchSpace;
 			}
@@ -23,5 +23,7 @@ contract rng {
 		return int(numOfBlocks);
 	}
 	
-	
+	function xor(uint p, uint q) private returns (uint){
+		return (p | q) & ~(p & q);
+	}
 }
