@@ -21,16 +21,34 @@ contract lotto {
 	address[] bets;
 	rng randomGenerator;
 	
+	uint betValue = 1 ether;
+	
 	function lotto(){
 		
 	}
 	
-	function bet(){
+	function bet() {
 		uint amount = msg.value;
-		if (amount < 1 wei){
+		
+		// do not accept bet 
+		// if amount of Ether is lower than betValue
+		if (amount < betValue){
 			throw;
+		}		
+		
+		// calculate number of bets for a single user
+		uint numOfBets = amount / betValue;
+		
+		// if amount of Ether is not divided by betValue
+		// send rest of the money to the better
+		uint amountToReturn = amount % betValue;
+		if(amountToReturn != 0) {
+			msg.sender.send(amountToReturn);
 		}
-		bets.push(msg.sender);
+		
+		for(uint i = 0; i < numOfBets; i++) {
+			bets.push(msg.sender);	
+		}
 	}
 	
 	
