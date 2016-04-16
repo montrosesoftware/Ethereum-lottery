@@ -9,7 +9,7 @@ contract lotto {
 	mapping (uint => address) userIndex;
 	mapping (address => uint) betsPerUser;
 	//rng randomGenerator;
-	bytes32 lastBlockHash;
+	bytes32 lastBlockHash = 0;
 	
 	function lotto(uint _uniqueUsersThreshold, uint8 _numOfBlocks, uint _betValue){
 		uniqueUsersThreshold = _uniqueUsersThreshold;
@@ -48,20 +48,23 @@ contract lotto {
 		else {
 			betsPerUser[user] += amount;
 		}
+		
+		if (usersCounter >= uniqueUsersThreshold){
+			//TODO: change index of block before release
+			lastBlockHash = block.blockhash(0);
+		}
+		
+		
 	}
 
 	function checkBettingAllowed() returns (bool){
-		if (usersCounter < uniqueUsersThreshold){
+		if (lastBlockHash == 0){
 			return true;
 		}
-		else{
-			//TODO: change index of block before release
-			lastBlockHash = block.blockhash(0);
-			return false;
-		}
+		return false;
 	}
 	
-	function draw() returns (uint randomNumber ){	
+	function draw() returns (uint randomNumber){	
 		return new rng().getRandom(block.blockhash(0), 2, 10);
 	}
 	
