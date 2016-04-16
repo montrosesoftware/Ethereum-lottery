@@ -13,8 +13,6 @@ contract lotto {
 	userBet[] bets;
 	bytes32 lotteryClosingHash = 0;
 	
-	uint userAccountStatus;
-	
 	function lotto(uint _uniqueUsersThreshold, uint8 _numOfBlocks, uint _betValue){
 		uniqueUsersThreshold = _uniqueUsersThreshold;
 		numOfBlocks = _numOfBlocks;
@@ -62,22 +60,26 @@ contract lotto {
 	modifier canBet {
 		if (lotteryClosingHash != 0) throw; _
 	}
-
 	
-	function draw() returns (uint randomNumber){	
-		return new rng().getRandom(block.blockhash(0), 2, 10);
+	function draw(uint threshlod) returns(uint){
+		return new rng().getRandom(lotteryClosingHash, 6, threshlod);
 	}
 	
-	function getWinner(uint id) returns(address winner) {
+	function rewardWinner(uint id) {
 		uint sum = 0;
-		for (uint i = 0; i < uniqueUsersThreshold; i++){
-			
+		for ( uint i= 0; i < bets.length; i++){
+			sum += bets[i].tickets;
 		}
+		uint winningNum = draw(sum);
 		
-//		if (id >= bets.length ){
-//			throw;
-//		}		
-//		return bets[id];
+		uint winningSum = 0;
+		for ( uint j= 0; j < bets.length; j++){
+			winningSum += bets[i].tickets;
+			if (winningNum < winningSum){
+				payout(bets[i].user);
+				return;
+			}
+		}
 	}
 	
 	function payout(address winner) {
