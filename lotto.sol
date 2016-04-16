@@ -1,14 +1,26 @@
 contract lotto {
-	address[] bets;
 	
-	uint betValue = 1 ether;
-	uint uniqueBettersThresholdTrigger = 20;
+	uint uniqueUsersThreshold = 20;
+	uint8 numOfBlocks;
+	uint betValue;
 	
-	function lotto(){
-		
+	uint usersCounter;
+	mapping (uint => address) userIndex;
+	mapping (address => uint) betsPerUser;
+	//rng randomGenerator;
+	bytes32 lastBlockHash;
+	
+	function lotto(uint _uniqueUsersThreshold, uint8 _numOfBlocks, uint _betValue){
+		uniqueUsersThreshold = _uniqueUsersThreshold;
+		numOfBlocks = _numOfBlocks;
+		betValue = _betValue;
 	}
 	
-	function bet() returns(byte) {
+	function bet()  {
+		if (!checkBettingAllowed()) {
+			throw;
+		}
+		
 		uint amount = msg.value;
 		
 		// do not accept bet 
@@ -27,43 +39,44 @@ contract lotto {
 			msg.sender.send(amountToReturn);
 		}
 		
-		for(uint i = 0; i < numOfBets; i++) {
-			bets.push(msg.sender);	
+		address user = msg.sender;
+		if (betsPerUser[user] == 0){
+			userIndex[usersCounter] = user;
+			betsPerUser[user] = numOfBets;
+			usersCounter++;
 		}
-		
-		if(shouldTriggerLottery() == 1) {
-			return 1;
+		else {
+			betsPerUser[user] += amount;
 		}
 	}
-	
-	/*
-	*
-	*/
-	function shouldTriggerLottery() private returns(byte) {
-		if(bets.length > uniqueBettersThresholdTrigger) return 1;
-		return 0;
+
+	function checkBettingAllowed() returns (bool){
+		if (usersCounter < uniqueUsersThreshold){
+			return true;
+		}
+		else{
+			//TODO: change index of block before release
+			lastBlockHash = block.blockhash(0);
+			return false;
+		}
 	}
 	
 	function draw() returns (uint randomNumber ){
-	//	uint raadomNumber = randomGenerator.getRandom(block.blockhash(0), 2, 10);
-	//	return randomNumber;
+		
+//		uint raadomNumber = randomGenerator.getRandom(block.blockhash(0), 2, 10);
+//		return randomNumber;
+
 	}
 	
 	function getWinner(uint id) returns(address winner) {
-		if (id >= bets.length) {
-			throw;
-		}		
-		return bets[id];
+				
+//		if (id >= bets.length ){
+//			throw;
+//		}		
+//		return bets[id];
 	}
 	
 	function payout(address winner) {
 		winner.send(this.balance);
-	}
-	
-	function testGetBalance() returns(uint[] balances) {
-		uint[] memory _balances = new uint[](2);
-		_balances[0] = bets[0].balance;
-		_balances[1] = bets[1].balance;
-		return _balances;
 	}
 }
