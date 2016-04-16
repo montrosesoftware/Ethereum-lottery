@@ -1,12 +1,10 @@
+import "./rng.sol";
+
 contract lotto {
 	address[] bets;
 	
 	uint betValue = 1 ether;
 	uint uniqueBettersThresholdTrigger = 20;
-	
-	function lotto(){
-		
-	}
 	
 	function bet() returns(byte) {
 		uint amount = msg.value;
@@ -45,8 +43,7 @@ contract lotto {
 	}
 	
 	function draw() returns (uint randomNumber ){
-	//	uint raadomNumber = randomGenerator.getRandom(block.blockhash(0), 2, 10);
-	//	return randomNumber;
+		return new rng().getRandom(block.blockhash(0), 2, 10);
 	}
 	
 	function getWinner(uint id) returns(address winner) {
