@@ -39,18 +39,18 @@ contract lotto {
 			msg.sender.send(amountToReturn);
 		}
 	
-		userBet memory current;
+		int current = -1;
 		for ( uint i= 0; i < bets.length; i++){
 			if(bets[i].user == msg.sender) {
-				current = bets[i];
+				current = int(i);
 				break;
 			}
 		}
-		if (current.user != 0) {
-			current.tickets += tickets;
+		
+		if (current != -1) {
+			bets[uint(current)].tickets += tickets;
 		} else {
-			current = userBet(tickets, msg.sender);
-			bets.push(current);
+			bets.push(userBet(tickets, msg.sender));
 		}
 		
 		if (bets.length >= uniqueUsersThreshold){
