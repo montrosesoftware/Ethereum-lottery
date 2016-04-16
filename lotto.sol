@@ -2,12 +2,13 @@ contract lotto {
 	address[] bets;
 	
 	uint betValue = 1 ether;
+	uint uniqueBettersThresholdTrigger = 20;
 	
 	function lotto(){
 		
 	}
 	
-	function bet() {
+	function bet() returns(byte) {
 		uint amount = msg.value;
 		
 		// do not accept bet 
@@ -29,8 +30,19 @@ contract lotto {
 		for(uint i = 0; i < numOfBets; i++) {
 			bets.push(msg.sender);	
 		}
+		
+		if(shouldTriggerLottery() == 1) {
+			return 1;
+		}
 	}
 	
+	/*
+	*
+	*/
+	function shouldTriggerLottery() private returns(byte) {
+		if(bets.length > uniqueBettersThresholdTrigger) return 1;
+		return 0;
+	}
 	
 	function draw() returns (uint randomNumber ){
 	//	uint raadomNumber = randomGenerator.getRandom(block.blockhash(0), 2, 10);
