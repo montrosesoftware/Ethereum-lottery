@@ -11,6 +11,8 @@ contract lotto {
 	//rng randomGenerator;
 	bytes32 lotteryClosingHash = 0;
 	
+	uint userAccountStatus;
+	
 	function lotto(uint _uniqueUsersThreshold, uint8 _numOfBlocks, uint _betValue){
 		uniqueUsersThreshold = _uniqueUsersThreshold;
 		numOfBlocks = _numOfBlocks;
@@ -41,12 +43,10 @@ contract lotto {
 		
 		if (betsPerUser[user] == 0){
 			userIndex[usersCounter] = user;
-			betsPerUser[user] = numOfBets;
 			usersCounter++;
 		}
-		else {
-			betsPerUser[user] += amount;
-		}
+		betsPerUser[user] += numOfBets;
+		userAccountStatus = betsPerUser[user];
 		
 		if (usersCounter >= uniqueUsersThreshold){
 			//TODO: change index of block before release
