@@ -2,13 +2,15 @@ import "./rng.sol";
 
 contract lotto {
 	
+	struct userBet {
+		uint tickets;
+		address user;
+	}
+	
 	uint uniqueUsersThreshold = 20;
 	uint8 numOfBlocks;
 	uint betValue;
-	uint usersCounter;
-	mapping (uint => address) userIndex;
-	mapping (address => uint) betsPerUser;
-	//rng randomGenerator;
+	userBet[] bets;
 	bytes32 lotteryClosingHash = 0;
 	
 	uint userAccountStatus;
@@ -20,35 +22,38 @@ contract lotto {
 	}
 	
 	function bet() canBet {
-		
 		uint amount = msg.value;
 		
 		// do not accept bet 
 		// if amount of Ether is lower than betValue
 		if (amount < betValue){
 			throw;
-		}		
+		}
 		
-		// calculate number of bets for a single user
-		uint numOfBets = amount / betValue;
-		
-		address user = msg.sender;
+		uint tickets = amount / betValue;
 		
 		// if amount of Ether is not divided by betValue
 		// send rest of the money to the better
 		uint amountToReturn = amount % betValue;
 		if(amountToReturn != 0) {
-			user.send(amountToReturn);
+			msg.sender.send(amountToReturn);
+		}
+	
+		userBet memory current;
+		for ( uint i= 0; i < bets.length; i++){
+			if(bets[i].user == msg.sender) {
+				current = bets[i];
+				break;
+			}
+		}
+		if (current.user != 0) {
+			current.tickets += tickets;
+		} else {
+			current = userBet(tickets, msg.sender);
+			bets.push(current);
 		}
 		
-		if (betsPerUser[user] == 0){
-			userIndex[usersCounter] = user;
-			usersCounter++;
-		}
-		betsPerUser[user] += numOfBets;
-		userAccountStatus = betsPerUser[user];
-		
-		if (usersCounter >= uniqueUsersThreshold){
+		if (bets.length >= uniqueUsersThreshold){
 			//TODO: change index of block before release
 			lotteryClosingHash = block.blockhash(0);
 		}
@@ -64,7 +69,11 @@ contract lotto {
 	}
 	
 	function getWinner(uint id) returns(address winner) {
-				
+		uint sum = 0;
+		for (uint i = 0; i < uniqueUsersThreshold; i++){
+			
+		}
+		
 //		if (id >= bets.length ){
 //			throw;
 //		}		
