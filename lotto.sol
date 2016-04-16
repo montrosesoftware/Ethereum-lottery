@@ -30,14 +30,15 @@ contract lotto {
 		// calculate number of bets for a single user
 		uint numOfBets = amount / betValue;
 		
+		address user = msg.sender;
+		
 		// if amount of Ether is not divided by betValue
 		// send rest of the money to the better
 		uint amountToReturn = amount % betValue;
 		if(amountToReturn != 0) {
-			msg.sender.send(amountToReturn);
+			user.send(amountToReturn);
 		}
 		
-		address user = msg.sender;
 		if (betsPerUser[user] == 0){
 			userIndex[usersCounter] = user;
 			betsPerUser[user] = numOfBets;
