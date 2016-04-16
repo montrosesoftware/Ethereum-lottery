@@ -1,15 +1,24 @@
 contract rng {
 	
-	function getRandom(bytes32 startingBlock, uint numOfBlocks, uint searchSpace) returns (uint randomNum) {
-		uint seed = 0;
-		for (uint i=255; i >= 0; i--) {
-			if (startingBlock == block.blockhash(i)) {
-				seed = uint(startingBlock);
-				for (uint j=1; j < numOfBlocks; j++){
-					seed = seed & uint(block.blockhash(i+j));
+	function getRandom(uint numOfBlocks, uint searchSpace) returns (uint randomNum) {
+		bytes32 startingBlock = block.blockhash(0);
+		
+		uint value = 0;
+		
+		
+		for (int i = 256; i >= 0; i--) {
+			if (startingBlock == block.blockhash(uint(i))) {
+				value = uint(startingBlock);
+				for (int j=1; j < int(numOfBlocks); j++){
+					value = value & uint(block.blockhash(uint(i+j)));
 				}
+				return value % searchSpace;
 			}
 		}
-		return seed % searchSpace;
+		throw;
+	}
+	
+	function validateNumOfBlocks(uint numOfBlocks) private returns (int) {
+		
 	}
 }

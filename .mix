@@ -86,6 +86,68 @@
 				},
 				{
 					"hash": "",
+					"number": 2,
+					"status": "mined",
+					"transactions": [
+						{
+							"contractId": "Rng",
+							"functionId": "Rng",
+							"gas": {
+								"value": "250000"
+							},
+							"gasAuto": true,
+							"gasPrice": {
+								"unit": 18,
+								"value": "100000"
+							},
+							"isContractCreation": true,
+							"isFunctionCall": true,
+							"label": "Rng.Rng()",
+							"parameters": {},
+							"saveStatus": true,
+							"sender": "cb73d9408c4720e230387d956eb0f829d8a4dd2c1055f96257167e14e7169074",
+							"value": {
+								"unit": 18,
+								"value": "0"
+							}
+						},
+						{
+							"contractId": "<Rng - 1>",
+							"functionId": "getRandom",
+							"gas": {
+								"value": "250000"
+							},
+							"gasAuto": true,
+							"gasPrice": {
+								"unit": 18,
+								"value": "100000"
+							},
+							"isContractCreation": false,
+							"isFunctionCall": true,
+							"label": "Rng.getRandom()",
+							"parameters": {
+								"numOfBlocks": "2",
+								"searchSpace": "5",
+								"startingBlock": "",
+								"v": ""
+							},
+							"saveStatus": true,
+							"sender": "cb73d9408c4720e230387d956eb0f829d8a4dd2c1055f96257167e14e7169074",
+							"value": {
+								"unit": 18,
+								"value": "0"
+							}
+						}
+					]
+				},
+				{
+					"hash": "",
+					"number": 3,
+					"status": "mined",
+					"transactions": []
+				},
+				{
+					"hash": "",
 					"number": -1,
 					"status": "pending",
 					"transactions": []
@@ -102,7 +164,7 @@
 				"name": "user1",
 				"secret": "cb73d9408c4720e230387d956eb0f829d8a4dd2c1055f96257167e14e7169074"
 			},
-			"title": "Default_1",
+			"title": "Lotto",
 			"transactions": [
 				{
 					"contractId": "Sample",
